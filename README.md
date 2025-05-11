@@ -5,8 +5,6 @@ This matches up perfectly with the beta wii, as it only had virtual console and 
 <br>
 <a href="https://github.com/betawii/early-shopping-channel/tree/nintendo-code-archive">Check out the early/scrapped shopping/virtual console channel code by nintendo for yourself here!</a>
 <br><br>
-<a href="https://github.com/betawii/early-shopping-channel/tree/early-shopping-channel-remade">Check out the remade html of the 2005/aug 2006 shop by me, using nintendos images and js from the 2005 shop, but with a new frontend thats not as heavy on jsp (easier to view) :)</a>
-<br><br>
 
 Source for photos in the folder "nintendoeverything.comSLASHa-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel":
 https://nintendoeverything.com/a-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel/
