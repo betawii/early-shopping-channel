@@ -3,7 +3,7 @@
 (if your confused, heres what im talkin about: <a target="_blank" href="https://nintendoeverything.com/a-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel/">early wii shop screenshots</a>
 <br>
 <h3>link down? no worries i backed up the photos here:</h3>
-<Br>
+<br>
 <a herf="https://github.com/betawii/early-shopping-channel/tree/main">https://github.com/betawii/early-shopping-channel/tree/main</a>
 <br>
 <h3>weird thing is, the photos are dated "August 18, 2006" and the code here is dated Dec 9th, 2005, yet they both have the same title images and same page design, i guess nintendo took the if it works it works to the next level..? </h3>
@@ -31,8 +31,15 @@ here are some screenshots of it on localhost btw (kinda broken cuz i tried to co
 <Br><img src="https://github.com/user-attachments/assets/9bb39767-58b4-4936-8bd5-4e31806fc19e"><br>
 <p>(a title description page with placeholder text [sadly the under button hover and some stuff are lost :<)</p>
 <Br><img src="https://github.com/user-attachments/assets/09d49aca-57d3-4569-9611-4aebdb191d5d"><br>
-<p>(a catalog, empty sadly, BUTTTTT, the title images exist in the title folder 🫢</p>
+<p>(a catalog, empty sadly, BUTTTTT, the title images exist in the /oss/oss/common/title folder 🫢</p>
 <Br><br>
+<p>one final intresting thing to note (i havent fully dug through the code yet), is that in in /oss/oss/WebContent/en_US/txt/license.txt, it reads <br> 
+"Nintendo <b>Revolution</b> Virtual Console"
+<br>
+"Usage Terms and Privacy Statement"
+  <br>
+  Proving that these files are older then the final "Wii" name, yet they stuck with this design and htmls until August 2006! meaning that somehow they managed to COMPLETELY change the design and html structure in only 3 MONTHS?! those devs must of been working over time 😭
+</p>
 
 <h2>&copy; Nintendo, 2005. i own no rights to these jsps, images, css, or javascript files.</h2>
 
