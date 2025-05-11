@@ -14,5 +14,3 @@ https://nintendoeverything.com/a-look-at-an-early-version-of-the-wii-shop-channe
 <img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-2.png">
 <img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-3.png">
 <img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-4.png">
-<br>
-<h3>weird thing is, the photos are dated "August 18, 2006" and the code in the nintendo-code-archive branch is dated Dec 9th, 2005, yet they both have the same title images and same page design, i guess nintendo took the if it works it works to the next level..? </h3>
