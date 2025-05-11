@@ -2,7 +2,7 @@
 <br>
 (if your confused, heres what im talkin about: <a target="_blank" href="https://nintendoeverything.com/a-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel/">early wii shop screenshots</a>
 <br>
-<h3>link down? no worries i backed up the photos here:</h3>
+<h3>link down? no worries i backed up the photos here: <a herf="https://github.com/betawii/early-shopping-channel/tree/main">https://github.com/betawii/early-shopping-channel/tree/main</a></h3>
 <br>
 <h3>weird thing is, the photos are dated "August 18, 2006" and the code here is dated Dec 9th, 2005, yet they both have the same title images and same page design, i guess nintendo took the if it works it works to the next level..? </h3>
 <br>
