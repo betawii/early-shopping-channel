@@ -1,7 +1,13 @@
 # 2005 beta wii shop/vc channel files.
 <br>
 (if your confused, heres what im talkin about: <a target="_blank" href="https://nintendoeverything.com/a-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel/">early wii shop screenshots</a>
-<br><br>
+<br>
+<h3>link down? no worries i backed up the photos here:</h3>
+<br>
+<h3>weird thing is, the photos are dated "August 18, 2006" and the code here is dated Dec 9th, 2005, yet they both have the same title images and same page design, i guess nintendo took the if it works it works to the next level..? </h3>
+<br>
+<h1>⬇️ anyway, lets get to the goodies ⬇️</h1>
+<br>
 <h3>Huge credit to <a href="https://github.com/MrRM05">RM05 (github)</a> /// <a href="https://www.youtube.com/@Mr_RM05">RM05 (youtube)</a>  for taking the previously impossible to use CVS files (history log files with filename,v) and removing the ,v to make them usable again using cvs checkout.</h3>
 <!-- 
 <br><br>
