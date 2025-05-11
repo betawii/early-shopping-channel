@@ -33,12 +33,15 @@ here are some screenshots of it on localhost btw (kinda broken cuz i tried to co
 <Br><img src="https://github.com/user-attachments/assets/09d49aca-57d3-4569-9611-4aebdb191d5d"><br>
 <p>(a catalog, empty sadly, BUTTTTT, the title images exist in the /oss/oss/common/title folder 🫢</p>
 <Br><br>
-<p>one final intresting thing to note (i havent fully dug through the code yet), is that in in /oss/oss/WebContent/en_US/txt/license.txt, it reads <br> 
-"Nintendo <b>Revolution</b> Virtual Console"
+<p>one final intresting thing to note (i havent fully dug through the code yet) <br>
+is that in <b>in /oss/oss/WebContent/en_US/txt/license.txt</b>, it reads <br> 
+<b>
+  "Nintendo <b>Revolution</b> Virtual Console"
 <br>
 "Usage Terms and Privacy Statement"
+</b>
   <br>
-  Proving that these files are older then the final "Wii" name, yet they stuck with this design and htmls until August 2006! meaning that somehow they managed to COMPLETELY change the design and html structure in only 3 MONTHS?! those devs must of been working over time 😭
+  Proving that these files are older then the final "Wii" name, yet they stuck with this design and htmls until <b>August 2006!</b> meaning that somehow they managed to <b>COMPLETELY</b> change the design and html structure <b>in only 3 MONTHS?!</b> those devs must of been working over time 😭
 </p>
 
 <h2>&copy; Nintendo, 2005. i own no rights to these jsps, images, css, or javascript files.</h2>
