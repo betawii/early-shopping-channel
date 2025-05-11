@@ -2,7 +2,12 @@
 <br>
 (if your confused, heres what im talkin about: <a target="_blank" href="https://nintendoeverything.com/a-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel/">early wii shop screenshots</a>
 <br><br>
-<h3>Huge credit to <a href="https://github.com/MrRM05">RM05 (github)</a> /// <a href="https://www.youtube.com/@Mr_RM05">RM05 (youtube)</a>  for taking the previously impossible to use CVS files (history log files with filename,v) and removing the ,v to make them usable again using cvs checkout. <br> i plan to recreate the html from scratch using nintendos js and images, but thats for a later date..</h3>
+<h3>Huge credit to <a href="https://github.com/MrRM05">RM05 (github)</a> /// <a href="https://www.youtube.com/@Mr_RM05">RM05 (youtube)</a>  for taking the previously impossible to use CVS files (history log files with filename,v) and removing the ,v to make them usable again using cvs checkout.</h3>
+<!-- 
+<br><br>
+<a href="https://github.com/betawii/early-shopping-channel/tree/early-shopping-channel-remade">Check out the remade html of the 2005/aug 2006 shop by me, using nintendos images and js from the 2005 shop, but with a new frontend thats not as heavy on jsp (easier to view) :)</a>
+-->
+
 <br><br>
 OSS folder dated dec 9th 2005 (12/9/2005), it seems to be for the scrapped virtual console channel/ early shop channel, <br> basically you would go to a home menu with these options:<br>
 <img src="https://github.com/user-attachments/assets/9e9fd939-694b-4c5d-8734-348e6ba972d4"><br>
