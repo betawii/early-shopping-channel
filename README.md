@@ -1,4 +1,4 @@
-# ChrisplayzWii's github repo to contain the 2005 beta wii shop/vc channel files.
+# 2005 beta wii shop/vc channel files.
 <br>
 (if your confused, heres what im talkin about: <a target="_blank" href="https://nintendoeverything.com/a-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel/">early wii shop screenshots</a>
 <br><br>
