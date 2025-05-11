@@ -3,7 +3,7 @@ Update: early wii shopping channel/virtual console code has officially been foun
 <br>
 This matches up perfectly with the beta wii, as it only had virtual console and the early wii shop channel, only had virtual console titles!
 <br>
-<a href="https://github.com/betawii/2005-earlywiishop-archive">Check out the early shopping channel code for yourself here! </a>
+<a href="https://github.com/betawii/2005-earlywiishop-archive">Check out tehe early shopping/virtual console channel code for yourself here!</a>
 <br><br>
 
 Source for photos in the folder "nintendoeverything.comSLASHa-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel":
