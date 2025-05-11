@@ -1,4 +1,4 @@
--# Archive of the early wii shopping channel/ virtual console channel photos!
+# Archive of the early wii shopping channel/ virtual console channel photos!
 <br>
 This matches up perfectly with the beta wii, as it only had virtual console and the early wii shop channel, only had virtual console titles!
 <br>
