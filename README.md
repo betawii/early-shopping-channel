@@ -31,7 +31,7 @@ here are some screenshots of it on localhost btw (kinda broken cuz i tried to co
 <Br><img src="https://github.com/user-attachments/assets/9bb39767-58b4-4936-8bd5-4e31806fc19e"><br>
 <p>(a title description page with placeholder text [sadly the under button hover and some stuff are lost :<)</p>
 <Br><img src="https://github.com/user-attachments/assets/09d49aca-57d3-4569-9611-4aebdb191d5d"><br>
-<p>(a catalog, empty sadly, BUTTTTT, the title images exist in the /oss/oss/common/title folder 🫢</p>
+<p>(a catalog, empty sadly, BUTTTTT, the title images exist in the <b>/oss/oss/WebContent/common/titles/</b> folder 🫢</p>
 <Br><br>
 <p>one final intresting thing to note (i havent fully dug through the code yet) <br>
 is that in <b>in /oss/oss/WebContent/en_US/txt/license.txt</b>, it reads <br> 
