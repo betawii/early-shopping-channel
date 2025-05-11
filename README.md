@@ -11,10 +11,9 @@
 <h1>⬇️ anyway, lets get to the goodies ⬇️</h1>
 <br>
 <h3>Huge credit to <a href="https://github.com/MrRM05">RM05 (github)</a> /// <a href="https://www.youtube.com/@Mr_RM05">RM05 (youtube)</a>  for taking the previously impossible to use CVS files (history log files with filename,v) and removing the ,v to make them usable again using cvs checkout.</h3>
-<!-- 
+
 <br><br>
 <a href="https://github.com/betawii/early-shopping-channel/tree/early-shopping-channel-remade">Check out the remade html of the 2005/aug 2006 shop by me, using nintendos images and js from the 2005 shop, but with a new frontend thats not as heavy on jsp (easier to view) :)</a>
--->
 
 <br><br>
 OSS folder dated dec 9th 2005 (12/9/2005), it seems to be for the scrapped virtual console channel/ early shop channel, <br> basically you would go to a home menu with these options:<br>
@@ -23,8 +22,8 @@ OSS folder dated dec 9th 2005 (12/9/2005), it seems to be for the scrapped virtu
 and some of those options lead you to the "early wii shop screenshots" seen here:<Br>
 https://nintendoeverything.com/a-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel/
 <br><br>
-<p>digging through teh oss will give you more info, it is JSP (JavaScript Server Pages) idk how to use those so i just put them here, hopefully someone can get the 2005 code to work with a website or smth but rn idk how 2 deal with the code :/</p>
-<br><br>
+<p>digging through teh oss folder will give you more info, it is JSP (JavaScript Server Pages) idk how to use those so i just put them here, hopefully someone can get the 2005 code to work with a website or smth but rn idk how 2 deal with the code :/</p>
+<br>
 here are some screenshots of it on localhost btw (kinda broken cuz i tried to convert it to plain html 🦆:<br>
 <img src="https://github.com/user-attachments/assets/c0a609d4-e765-4e4f-b3d6-cb7e3d825f7b"><br>
 <p>(notice that blue button, in the code it says RENT, meaning you could at one point rent titles!)</p>
