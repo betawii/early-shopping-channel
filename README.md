@@ -4,7 +4,7 @@
 <a herf="https://github.com/betawii/early-shopping-channel/tree/main">https://github.com/betawii/early-shopping-channel/tree/main</a>
 <br>
 <br>
-<h3>Huge credit to <a href="https://github.com/MrRM05">RM05 (github)</a> /// <a href="https://www.youtube.com/@Mr_RM05">RM05 (youtube)</a>  for taking the previously impossible to use CVS files (history log files with filename,v) and removing the ,v to make them usable again using cvs checkout. <br><br> edit Sep 21, 2025: /oss/ folder and a cvs/noncvs version were uploaded here, i replaced the original files from rm05 since when i uploaded them here i accidently deleted some files and no longer had a copy of the files rm05 sent, i checked out the cvs files and cleaned up things. (https://github.com/betawii/early-shopping-channel/commit/630135b12ab1f045ff301832559782a844cbac97) </h3>
+<h3>Huge credit to <a href="https://github.com/MrRM05">RM05 (github)</a> /// <a href="https://www.youtube.com/@Mr_RM05">RM05 (youtube)</a>  for taking the previously impossible to use CVS files (history log files with filename,v) and removing the ,v to make them usable again using cvs checkout. <br><br> edit Sep 21, 2025: /oss/ folder and a cvs/noncvs version were uploaded here, i replaced the original files from rm05 since when i uploaded them here i accidently deleted some files and no longer had a copy of the files rm05 sent, i checked out the cvs files and cleaned up things.</h3>
 
 <h1>⬇️ with that out of the way, lets get to the goodies ⬇️</h1>
 
@@ -381,6 +381,7 @@ Age: <input type="text" name="age" id="ageField"/>
 <a href="https://wiibrew.org/wiki/Accessing_Wii_Shop_Channel_from_PC">guide to access the wii shop on browser</a>
   
 <br><br><h2>&copy; Nintendo, 2005/6. i do not own these files.</h2>
+
 
 
 
