@@ -10,7 +10,7 @@ This matches up perfectly with the beta wii, as it only had virtual console and 
 Source for photos in the folder "nintendoeverything.comSLASHa-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel":
 https://nintendoeverything.com/a-look-at-an-early-version-of-the-wii-shop-channel-and-a-scrapped-channel/
 <br>
-<img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-1.png">
-<img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-2.png">
-<img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-3.png">
-<img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-4.png">
+<img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-1.png"  alt="/early-wii-shop-channel/early-wii-shop-4.png">
+<img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-2.png"  alt="/early-wii-shop-channel/early-wii-shop-4.png">
+<img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-3.png"  alt="/early-wii-shop-channel/early-wii-shop-4.png">
+<img style="max-width:150px;" src="https://nintendoeverything.com/wp-content/uploads/sites/1/nggallery/early-wii-shop-channel/early-wii-shop-4.png" alt="/early-wii-shop-channel/early-wii-shop-4.png">
