@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# pre-installation script
+
+/bin/rm -f /opt/init.d/*[0-9]oss

@@ -1,0 +1,54 @@
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<META http-equiv="Expires" content=-1>
+<META http-equiv="Cache-Control" content="no-cache">
+<META http-equiv="Pragma" content="no-cache">
+<link rel=stylesheet type="text/css" href="<c:out value="${cssPath}"/>/oss.css">
+
+<% 
+	String userAgent = request.getHeader("User-Agent").toUpperCase();
+	if (userAgent.indexOf("OPERA") >= 0
+		&& userAgent.indexOf("UATEST") >= 0) {			
+		pageContext.setAttribute("onWii", Boolean.TRUE);
+	} else {
+		pageContext.setAttribute("onWii", Boolean.FALSE);
+	}
+%>
+
+<SCRIPT language="JavaScript" src="<c:out value="${jsPath}"/>/ec.js"></SCRIPT>
+<c:if test="${not onWii}">
+<SCRIPT language="JavaScript" src="<c:out value="${jsPath}"/>/ec_emulate.js"></SCRIPT>
+</c:if>
+<SCRIPT language="JavaScript" src="<c:out value="${jsPath}"/>/ec_example.js"></SCRIPT>
+<SCRIPT language="JavaScript" src="<c:out value="${jsPath}"/>/vc.js"></SCRIPT>
+
+<script type="text/JavaScript">
+<!--
+	var ecsUrl = null;
+	var iasUrl = null;	
+	var ccsUrl = null;
+	var ucsUrl = null;
+<c:if test="${not empty EXT_ECS_URL}">
+	ecsUrl = '<c:out value="${EXT_ECS_URL}"/>';
+</c:if>	
+<c:if test="${not empty EXT_IAS_URL}">
+	iasUrl = '<c:out value="${EXT_IAS_URL}"/>';
+</c:if>	
+<c:if test="${not empty EXT_CONTENT_PREFIX_URL}">
+	ccsUrl = '<c:out value="${EXT_CONTENT_PREFIX_URL}"/>';
+</c:if>	
+<c:if test="${not empty EXT_UNCACHED_CONTENT_PREFIX_URL}">
+	ucsUrl = '<c:out value="${EXT_UNCACHED_CONTENT_PREFIX_URL}"/>';
+</c:if>	
+
+	ec.setWebSvcURLs(ecsUrl, iasUrl);
+	ec.setContentURLs (ccsUrl, ucsUrl);
+	
+<c:if test="${not onWii}">
+	ec.setRegion('<c:out value="${region}"/>');
+	ec.setCountry('<c:out value="${country}"/>');
+	ec.setLanguage('<c:out value="${language}"/>');
+	ec.setAge('<c:out value="${age}"/>');
+</c:if>	
+//-->
+
+</script>

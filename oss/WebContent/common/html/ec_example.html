@@ -1,0 +1,1122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>ECommerce Object Example</title>
+    <script type="text/javascript" src="../js/ec.js"></script>
+    <!--
+    <script type="text/javascript" src="../js/ec_emulate.js"></script>
+    -->
+    <script type="text/javascript" src="../js/ec_example.js"></script>
+
+    <style type="text/css">
+        body, p, td, div, span, a { font-size: 12px; color: #000000; font-family: tahoma,arial,verdana,sans-serif; }
+        option, input, textarea, select, .formText { font-family: tahoma,arial,verdana,sans-serif; }
+        <!-- /*.tdButton{width:100%} Doesn't work with opera*/  -->
+        .tdButton{}
+        .tdButton1{border-style: outset; text-align:center; background-color: #F5F5F5; color:#000000; font-weight:normal; font-size:100%}
+        .td1{text-align:center; background-color: #FFFFE0; color:#000000; font-weight:normal; font-size:100%}
+        th{background-color: #FFFFE0;}
+        .style1{color:#FA8072; font-weight:normal; font-size:200%}
+        .style2{color:#1E90FF; font-weight:normal; font-size:160%}
+        .style3{visibility:hidden}
+        .errText{color:#FF0000; font-weight:bold; font-size:200%}
+        .successText{color:#FA8072; font-weight:bold; font-size:200%}
+    </style>
+
+
+    <script language="JavaScript">
+
+        var DEBUG = true;
+        var wii = true;
+        var opera = true; // set by initPage()
+        var msie = false; // set by initPage()
+        var dots = "";
+        var useProgressBar; // set by initPage()
+        var progressCount;
+        var titleId = null;
+        var lab3 = true;
+        var defTitleId = lab3 ? "0001000000080001" : "0002000100080033";
+        var ec = new ECommerceInterface ();  // only create one per page
+        var disableButtonsDuringOp = true;
+        var progressRate = 2;  // 1:slow, 2:normal, 3:fast. Inc'd by initPage()
+        var opName;
+        var opDesc;
+
+        function setText1 (dynText1, optStyle1)
+        {
+            if (dynText1 != null) {
+                var d1 = document.getElementById("dynDiv1");
+                d1.innerHTML = dynText1;
+                if (optStyle1 == null) {
+                    d1.className = "style1";
+                } else  {
+                    d1.className = optStyle1;
+                }
+            }
+        }
+
+        function setText2 (dynText2, optStyle2)
+        {
+            if (dynText2 != null) {
+                var d2 = document.getElementById("dynDiv2");
+                d2.innerHTML = dynText2;
+                if (optStyle2 == null) {
+                    d2.className = "style2";
+                } else  {
+                    d2.className = optStyle2;
+                }
+            }
+        }
+
+        function setErr (errText, optStyle)
+        {
+            var d = document.getElementById("errDiv");
+            d.innerHTML = errText;
+            if (optStyle == null) {
+                d.className = "errText";
+            } else  {
+                d.className = optStyle;
+            }
+        }
+
+
+        function hexString (number)
+        {
+            return "0x" + number.toString(16);
+        }
+
+
+        function selectTitle(newTitleId)
+        {
+            var t;
+            var suggested;
+            var answer;
+            
+            if (newTitleId != null) {
+                answer = newTitleId;
+            }
+            else {
+                if (titleId == null || titleId == "") {
+                    suggested = defTitleId;
+                } else {
+                    suggested = titleId;
+                }
+
+                answer = prompt ("Enter title ID:", suggested);
+            }
+
+            if (answer != null && answer != "") {
+                titleId = answer;
+                t = "You selected title  " + titleId;
+                document.getElementById("selectedTitle").innerHTML = titleId;
+            }
+            else {
+                t = "Title ID not changed";
+            }
+
+            setErr ("");
+            setText1 (t);
+        }
+
+
+        function incProgressRate ()
+        {
+            var t;
+
+            // NOTE: ec.maxProgressInc and ec.minProgressInc are debug properties
+            //       only present in the emulated EcommerceInterface object.
+
+            if (++progressRate > 3) {
+                progressRate = 1;
+            }
+            if (progressRate == 1) {
+                t = "Slow Progress";
+                ec.maxProgressInc = 7;
+                ec.minProgressInc = 3;
+            } else if (progressRate == 2) {
+                t = "Normal progress";
+                ec.maxProgressInc = 13;
+                ec.minProgressInc =  5;
+            } else if (progressRate == 3) {
+                t = "Fast Progress";
+                ec.maxProgressInc = 40;
+                ec.minProgressInc = 15;
+            }
+            document.getElementById("progressRate").innerHTML = t;
+        }
+
+        function togDisDurOp ()
+        {
+            var t;
+            disableButtonsDuringOp = !disableButtonsDuringOp;
+            document.getElementById("disDurOp").innerHTML =
+                disableButtonsDuringOp ? "disable during op" : "no button disable";
+            if (ec.isOperationActive()) {
+                disableButtons (disableButtonsDuringOp);
+            }
+        }
+
+        function disableButtons (isDisable)
+        {
+            if (isDisable && !disableButtonsDuringOp) {
+                return;
+            }
+
+            for (i = 1;  i < 30;  ++i) {
+                if (i == 3 || i == 4) {
+                    continue;
+                }
+                var b = document.getElementById("button" + i);
+
+                if (b != null) {
+                    b.disabled = isDisable;
+                }
+            }
+        }
+
+
+        function wasOpStarted (progress, msg)
+        {
+            if (progress.status < 0 && progress.status != EC_ERROR_NOT_DONE) {
+                showResult (progress, progress.operation, opDesc);
+                setErr (""); // op errors are displayed by setText1 (t1)
+                return false;
+            }
+            return true;
+        }
+
+        function setPoints(points)
+        {
+            document.getElementById("points").innerHTML = points;
+        }
+
+        function getPointsBalance()
+        {
+            opName = "Refresh Points Balance";
+            opDesc = "Refreshing Points available for purchases";
+            if ( wasOpStarted (ec.refreshCachedBalance (), opDesc)) {
+                showProgress(true, opName, opDesc, "onRefreshCachedBalanceDone");
+            }
+        }
+
+        function onRefreshCachedBalanceDone (progress)
+        {
+            showResult (progress, opName, opDesc);
+            finishOnOpDone ();
+            if (progress.status >= 0) {
+                setPoints(ec.cachedBalance);
+            }
+        }
+
+
+        function showLimits (limits)
+        {
+            var len = limits.length;
+            var i;
+            var msg = "";
+            
+            for (i = 0; i < len;  ++i) {
+            
+                var code  = limits.get(i).code;
+                var limit = limits.get(i).limit;
+                
+                msg += "limits.get(" + i + ").code, limit " +
+                        code  + ", " + limit + "    ";
+            }
+            setText1 (msg);
+        }
+        
+        
+        function setTitleLimits (limits)
+        {
+            // more  ways to set title limits
+             
+            var limit_1 = new ECTitleLimit("TR", 60*60*24*31);
+            
+            var limit_2 = new ECTitleLimit();
+            limit_2.code = "LR";
+            limit_2.limit = 15;
+            limit_2.limit = "15";
+            
+            limits.set(0,limit_1);
+            limits.set(1,limit_2);
+                
+        }
+        
+        function getTitleLimits2 ()
+        {
+            // example of constructing limts with limit constructor args
+            
+            var limit_1 = new ECTitleLimit("DR", 1153585981); // absolute time
+            var limit_1 = new ECTitleLimit("DR", "1153585981"); // absolute time
+            var limit_2 = new ECTitleLimit("LR", 25);         // 25 launches
+            var limit_2 = new ECTitleLimit("LR", "25");         // 25 launches
+            
+            var limits = new ECTitleLimits(limit_1, limit_2);
+            
+            return limits;
+        }
+        
+        function getTitleLimits()
+        {
+            // Examples of using ECTitleLimit and ECTitleLimits
+            
+            /**********
+
+            var limits = new ECTitleLimits ();
+            limits.set(0, "TR", 60*60*24*31);  // 31 days
+            limits.set(1, "LR", 10);           // 10 launches           
+            limits.set("1", "LR", "10");       // 10 launches           
+            showLimits (limits);
+                
+            // or
+            
+            var limits2 = new ECTitleLimits ();
+            setTitleLimits (limits2);  // passes obj by reference
+            showLimits (limits2);
+            
+            // or
+            
+            var limits3 = getTitleLimits2()
+            showLimits (limits3);
+            
+            // or
+            
+            ***********/
+            
+            var no_limits = new ECTitleLimits ();  // default is PR
+           
+            return no_limits;
+        }
+
+        function purchaseTitle()
+        {
+            if (titleId == null) {
+                setErr ( "ERROR: purchaseTitle:  No selected title");
+            }
+            else {
+                var itemId = "100004";  // can be number or number as string
+                // if JP, itemId is "100002" ?
+                var amount = 100;
+                var currency = "POINTS"
+                var price = new ECPrice (amount, currency);
+                var payment = new ECAccountPayment(); // buy with points
+                
+                var limits = getTitleLimits();
+                
+                var purchaseInfo = "<your purchase info here>";
+                var taxes       = "77";
+                var discount    = "43";
+                
+                opName  = "Purchase Title";
+                opDesc  = "Purchasing Title  " + titleId;
+                var progress = ec.purchaseTitle (titleId, itemId,
+                                                 price, payment,
+                                                 limits,
+                                                 taxes,        // optional
+                                                 purchaseInfo, // optional
+                                                 discount);    // optional
+                if ( wasOpStarted (progress, opDesc)) {
+                    showProgress(true, opName, opDesc, "onOpDone");
+                }
+            }
+        }
+
+
+        function syncTickets ()
+        {
+            opName = "Sync Tickets";
+            opDesc = "Synchronizing Tickets with server";
+            if ( wasOpStarted (ec.syncTickets (), opDesc)) {
+                showProgress(true, opName, opDesc, "onSyncTicketsDone");
+            }
+        }
+                
+        function onSyncTicketsDone (progress)
+        {
+            showResult (progress, opName, opDesc);
+            finishOnOpDone ();
+            listOwnedTitles();
+        }
+
+
+
+
+        function redeemECard()
+        {
+            var msg;
+            if (titleId == null) {
+                setErr ( "ERROR: redeemECard:  No selected title");
+            }
+            else {
+                var eCard;
+                var suggested = "1003033457718541"; // "00001000100303340057718541"
+                if (wii) {
+                    eCard = suggested;
+                } else {
+                    var answer = prompt ("Enter eCard:", suggested);
+
+                    if (answer != null && answer != "") {
+                        eCard = answer;
+                    }
+                    else {
+                        setText1 ("Redeem eCard canceled");
+                        return;
+                    }
+                }
+                opName  = "Redeem eCard";
+                opDesc  = "Redeeming  " + eCard + "  for title  "+ titleId;
+                if ( wasOpStarted (ec.redeemECard (eCard, titleId), opDesc)) {
+                    showProgress(true, opName, opDesc, "onOpDone");
+                }
+            }
+        }
+
+
+
+        function purchasePoints()
+        {
+            var pointsToBuy = 101;
+            var ccNumber    = "5555 5555 5555 5555";
+            var itemId = 5;
+            var amount = 1000;
+            var currency = "USD"
+            var purchaseInfo = "<your purchase info here>";
+            var taxes       = "77";
+            var discount    = "43";
+
+            // ECCreditCardPayment, ECECardPayment, and ECAccountPayment objects
+            // have a paymentMethod property initialized in the object constructor.
+
+            var payment;
+            
+            payment = new ECCreditCardPayment(ccNumber);
+            // or
+            
+            var cc = new ECCreditCardPayment();
+            cc.number = ccNumber;        
+            payment = cc;
+            
+            // or
+            
+            eCard = new ECECardPayment ()
+            eCard.number = "0008000200030004";
+            payment = eCard;
+            
+            // or
+            
+            var account = new ECAccountPayment ();
+            // account.id = "12345";     // default is vcid and vcid password
+            // account.password = "aPassword";
+            payment = account;
+            
+            var price = new ECPrice (amount, currency);
+            
+            // or
+            
+            price = new ECPrice ();
+            price.amount = amount;
+            price.currency = currency;
+
+            // Total account points balance will be returned in ec.pointsBalance
+
+            opName = "Purchase Points";
+            opDesc = "Purchasing Points";
+            var progress = ec.purchasePoints (pointsToBuy,
+                                              itemId,
+                                              price,
+                                              payment,
+                                              taxes,        // optional,
+                                              purchaseInfo, // optional
+                                              discount);    // optional
+            if ( wasOpStarted (progress, opDesc)) {
+                progress.descripton = pointsToBuy;
+                showProgress(true, opName, opDesc, "onBuyPointsDone");
+            }
+        }
+
+        function onBuyPointsDone (progress)
+        {
+            if (progress.status >= 0) {
+                setPoints(ec.cachedBalance);
+                opDesc += "  Purchased points: " + progress.description;
+            }
+            showResult (progress, opName, opDesc);
+            finishOnOpDone ();
+        }
+
+
+
+        function download()
+        {
+            if (titleId == null) {
+                setErr ( "ERROR: download:  No selected title");
+            }
+            else {
+                opName = "Download";
+                opDesc = "Downloading  "  + titleId;
+                if ( wasOpStarted (ec.downloadTitle (titleId), opDesc)) {
+                    showProgress(true, opName, opDesc, "onOpDone");
+                }
+            }
+        }
+
+
+
+        function getUpdatedApps()
+        {
+            opName = "Get updated application title info";
+            opDesc = "Geting updated application title info";
+            if ( wasOpStarted (ec.getUpdatedApps (), opDesc)) {
+                showProgress(true, opName, opDesc, "onOpDone");
+            }
+        }
+
+
+
+        function registerVirtualConsole()
+        {
+            opName = "Register Virtual Console";
+            opDesc = "Registering Virtual Console";
+            if ( wasOpStarted (ec.registerVirtualConsole (), opDesc)) {
+                showProgress(true, opName, opDesc, "onRegisterVirtualConsoleDone");
+            }
+        }
+
+        function onRegisterVirtualConsoleDone (progress)
+        {
+            showResult (progress, opName, opDesc);
+            finishOnOpDone ();
+            if (progress.status >= 0) {
+                document.getElementById("vcid").innerHTML = "Registered";
+            }
+        }
+
+
+
+        function showProgress(firstTime, operation, description, onDone)
+        {
+            var msg;
+            var text1;
+            var text2;
+            var s1;
+            var done = true;
+            var isFailed = true;
+            var onDoneText;
+
+            var progress = ec.getProgress();
+            
+            if (progress.status == EC_ERROR_NOT_BUSY) {
+                return;
+            }
+
+            if (useProgressBar) {
+            
+                var timeInterval = 1000;
+                var message1;
+                var message2 = null;
+                if (progress.totalSize) {
+                    message1 = operation + " progress: ";
+                } else {
+                    progresCount = 0;
+                    message1 = operation + ". Please Wait.";
+                }
+                // use default color,height,width,style
+                var color = null;
+                var height = null;
+                var width = null;
+                var style = null;
+                setText1 (description, "style2");
+                setErr ("");
+                disableButtons (true);
+                showProgressBar("ec", "defTbpFunc", onDone,
+                                 "dynDiv2", timeInterval,
+                                 message1,message2,
+                                 color,height,width,style);
+           }
+            else {
+                if (progress.status == EC_ERROR_NOT_DONE) {
+                    // showDebug (progress.phase);
+                    msg = operation;
+                    if (progress.totalSize) {
+                        // not expected except when downloading content
+                        var perCent = Math.round((100 * progress.downloadedSize)
+                                                   / progress.totalSize);
+                        msg += ":  downloadedSize " + progress.downloadedSize +
+                               "   totalSize "   + progress.totalSize +
+                               "   " + perCent + "%";
+                    }
+                    else {
+                        if (firstTime || dots.length == 10) {
+                            dots = "";
+                        }
+                        dots += "**";
+                        msg += ": Please wait.  " + dots;
+                    }
+                    setText1 (msg);
+ 
+                    if (firstTime) {
+                        setText2 (description);
+                        setErr ("");
+                        disableButtons (true);
+                    }
+                    setTimeout ('showProgress(false,"' + operation + '","' + description
+                                            + '","' + onDone + '")', 1000);
+                }
+                else {
+                    eval (onDone+"(progress)");
+                }
+            }
+        }
+
+
+        function showResult (progress, operation, description)
+        {
+            var t1;
+            var s1;
+            var rv = progress.status;
+            
+            if (rv == EC_ERROR_NOT_DONE) {
+                t1 = "Internal Error: showResult was called before operation finished";
+                s1 = "errText";
+            }
+            else if (rv == EC_ERROR_NOT_BUSY || rv == EC_ERROR_NOT_ACTIVE) {
+                t1 = "Internal Error: expected operation status " +
+                        "but ec.getProgress() returned: " + errString(rv);
+                s1 = "errText";
+            }
+            else if (rv < 0) {
+                t1 = description + ": Failed: " + errString(rv);
+                s1 = "errText";
+            }
+            else {
+                t1 = description + ": Success";
+                s1 = "successText";
+            }
+
+            setText1 (t1, s1);
+            if (progress.errInfo == null)
+                setText2 ("Select another Operation");
+            else
+                setText2 (progress.errInfo)
+        }
+
+
+        function defTbpFunc (barPerCent, progress)
+        {
+            // Returns progess text and bar %.  see updateProgress().
+            // The 'tbp' stands for text and bar per cent.
+            // default meaning of progess.value is  0 to 99 per cent
+            // but could be used diferently for different operations.
+            // The tbpFunction is not normally called by updateProgess
+            // when progress.value is 100, because at that point the
+            // operation is complete and onDone is called instead.
+
+            if (progress.totalSize) {
+                // not expected except when downloading content
+                barPerCent.value = Math.round((100 * progress.downloadedSize) / progress.totalSize);
+                return barPerCent.value + "%";
+            }
+            else {
+                if (++progresCount > 4) {
+                    barPerCent.value = 10;
+                    count = 1;
+                } else {
+                    barPerCent.value = 20 * progresCount;
+                }
+                return null;
+            }
+        }
+
+        // Default onOpDone
+        //
+        function  onOpDone (progress)
+        {
+            showResult (progress, opName, opDesc);
+            finishOnOpDone ();
+        }
+
+        function finishOnOpDone ()
+        {
+            disableButtons (false);
+            setErr (""); // op errors are displayed by setText1 (t1)
+        }
+
+
+        function getDeviceInfo()
+        {
+            var r = ec.getDeviceInfo ();
+            if (typeof(r) != "object") {
+                setErr ( "ERROR: getDeviceInfo returned " + r);
+            }
+            else {
+                setText1 ("<table border=1>" +
+                             "<tr><td  class='td1'>deviceId    <td  class='td1'><td  class='td1'>" + r.deviceId    + "</td></tr>" +
+                             "<tr><td  class='td1'>serial      <td  class='td1'><td  class='td1'>" + r.serial      + "</td></tr>" +
+                             "<tr><td  class='td1'>vcid        <td  class='td1'><td  class='td1'>" + r.vcid        + "</td></tr>" +
+                             "<tr><td  class='td1'>country   <td  class='td1'><td  class='td1'>" + r.country   + "</td></tr>" +
+                             "<tr><td  class='td1'>region      <td  class='td1'><td  class='td1'>" + r.region      + "</td></tr>" +
+                             "<tr><td  class='td1'>language    <td  class='td1'><td  class='td1'>" + r.language    + "</td></tr>" +
+                             "<tr><td  class='td1'>block size  <td  class='td1'><td  class='td1'>" + r.blockSize   + "</td></tr>" +
+                             "<tr><td  class='td1'>used blocks <td  class='td1'><td  class='td1'>" + r.usedBlocks  + "</td></tr>" +
+                             "<tr><td  class='td1'>total blocks<td  class='td1'><td  class='td1'>" + r.totalBlocks + "</td></tr>" +
+                             "<tr><td  class='td1'>user age    <td  class='td1'><td  class='td1'>" + r.userAge     + "</td></tr>" +
+                         "</table>");
+                var isParentalControlEnabled = r.isParentalControlEnabled;
+                var isNeedTicketSync   = r.isNeedTicketSync;
+                setText2 ("Select another Operation");
+                setErr ("");
+            }
+        }
+
+
+
+
+        function setCountry(country)
+        {
+            var country;
+            var suggested = "US";
+            var answer;
+
+            if (country == null) {
+                if (wii) {
+                    answer = suggested;
+                } else {
+                    answer = prompt ("Enter country ID:", suggested);
+                }
+                            
+                if (answer != null && answer != "") {
+                    country = answer;
+                }
+                else {
+                    setText1 ("Set country canceled");
+                    return;
+                }
+            }
+            var r = ec.setCountry (country);
+            if (r != EC_ERROR_OK) {
+                setErr ( "ERROR: setCountry returned  " + r);
+            }
+            else {
+                document.getElementById("country").innerHTML = country;
+                setText1 ("Set country was succesfull");
+                setText2 ("Select another Operation");
+                setErr ("");
+            }
+        }
+
+
+
+
+        function checkParentalControlPassword()
+        {
+            var t = "";
+            var err = "";
+            var passwd;
+            var suggested = "********";
+            var answer;
+
+            if (wii) {
+                answer = "thePasswd";
+            } else {
+                answer = prompt ("Enter password:", suggested);
+            }
+                        
+            if (answer != null && answer != "") {
+                passwd = answer;
+            }
+            else {
+                setText1 ("\"Let me play\" canceled");
+                return;
+            }
+            var r = ec.checkParentalControlPassword (passwd);
+            if (typeof(r) != "boolean") {
+                if (r == EC_ERROR_NOT_FOUND) {
+                    t = "Parental control password is not set";
+                } else {
+                    err ="Could not check Parental Control Password";
+                }
+            }
+            else if (r)
+                t = "Password was correct";
+            else
+                t = "Password was wrong";
+            setText1 (t);
+            setText2 ("Select another Operation");
+            setErr (err);
+        }
+
+
+        function launchTitle()
+        {
+            trace ("begin launchTitle");
+            var info;
+            
+            var t = ec.getTitleInfo (titleId);
+            trace ("got title Info");
+            setText2 ("Select another Operation");
+            setErr ("");
+            if (typeof(t) != "object") {
+                if (t == EC_ERROR_NOT_FOUND) {
+                    info = "Title is not owned";
+                } else {
+                    info = "getTitleInfo returned " + t;
+                }
+                setText1 (info);
+            }
+            else {
+                info = "launching titleId " + t.titleId + " ticketId " + t.ticketId;
+                setText1 (info);
+            
+                var r = ec.launchTitle (t.titleId, t.ticketId);
+                
+                if (r != EC_ERROR_OK) {
+                    setErr ("ec.launchTitle returned " + errString(r));
+                }
+            }
+        }
+        
+        
+        function deleteTicket()
+        {
+            trace ("begin delete server ticket, local ticket, title content, data, and tmd");
+            var r;
+            var info;
+            
+            var t = ec.getTitleInfo (titleId);
+            trace ("got title Info for delete title ticket");
+            setText2 ("Select another Operation");
+            setErr ("");
+            if (typeof(t) != "object") {
+                if (t == EC_ERROR_NOT_FOUND) {
+                    info = "Title is not owned";
+                } else {
+                    info = "getTitleInfo returned " + t;
+                }
+                setText1 (info);
+            }
+            else {
+                setText1 ("Deleting server ticket, local ticket, title content, data, and tmd for titleId " + t.titleId + " ticketId " + t.ticketId);
+                opName  = "Delete Ticket";
+                opDesc  = "Deleting server ticket, local ticket, title content, data, and tmd for ticket  " + t.ticketId + "  title  "+ t.titleId;
+                var progress = ec.deleteTicket (t.titleId, t.ticketId);
+                if ( wasOpStarted (progress, opDesc)) {
+                    showProgress(true, opName, opDesc, "onOpDone");
+                }
+            }
+        }
+        
+        
+        function deleteLocalTicket()
+        {
+            // This functin is only used for testing ticket sync
+            trace ("begin delete title content, data, tmd, and local ticket");
+            var r;
+            var info;
+            
+            var t = ec.getTitleInfo (titleId);
+            trace ("got title Info for delete title ticket");
+            setText2 ("Select another Operation");
+            setErr ("");
+            if (typeof(t) != "object") {
+                if (t == EC_ERROR_NOT_FOUND) {
+                    info = "Title is not owned";
+                } else {
+                    info = "getTitleInfo returned " + t;
+                }
+                setText1 (info);
+            }
+            else {
+                setText1 ("Deleting content, data, tmd, and local ticket for titleId " + t.titleId + " ticketId " + t.ticketId);
+            
+                r = ec.deleteTitle (t.titleId);
+                
+                if (r != EC_ERROR_OK) {
+                    setErr ("ec.deleteTitle returned " + errString(r));
+                }
+                else {
+                    r = ec.deleteLocalTicket (t.titleId, t.ticketId);
+                    
+                    if (r == EC_ERROR_OK) {
+                        setText1 ("Deleted content, data, tmd, and local ticket for titleId " + t.titleId + " ticketId " + t.ticketId);
+                    } else {
+                        setErr ("ec.deleteLocalTicket returned " + errString(r));
+                    }
+                }
+            }
+        }
+        
+        
+        function deleteTitle()
+        {
+            trace ("begin delete title content, data, and tmd");
+            setErr ("");
+            setText1 ("Deleting content, data, and tmd for titleId " + t.titleId + " ticketId " + t.ticketId);
+        
+            var r = ec.deleteTitle (t.titleId);
+            
+            if (r == EC_ERROR_OK) {
+                setText1 ("Deleted content, data, tmd, and ticket for titleId " + t.titleId + " ticketId " + t.ticketId);
+            } else {
+                setErr ("ec.deleteTitle returned " + errString(r));
+            }
+        }
+        
+        
+        function deleteTitleContent()
+        {
+            trace ("begin delete title content");
+            setErr ("");
+            setText1 ("Deleting content for titleId " + titleId);
+        
+            var r = ec.deleteTitleContent (titleId);
+    
+            if (r == EC_ERROR_OK) {
+                setText1 ("Deleted content for titleId " + titleId);
+            } else {
+                setErr ("ec.deleteTitleContent returned " + errString(r));
+            }
+        }
+        
+        
+        
+        
+        function getTitleInfo()
+        {
+            if (titleId == null) {
+                setErr ( "ERROR: getTitleInfo:  No selected title");
+            }
+            else {
+                // ec.getTitleInfo returns ECOwnedTitle object or ECError number
+                var t = ec.getTitleInfo (titleId);
+                var info;
+                if (typeof(t) != "object") {
+                    if (t == EC_ERROR_NOT_FOUND)
+                        info = "Title is not owned";
+                    else
+                        info = "getTitleInfo returned " + t;
+                }
+                else {
+                    info = "<table border=1>" +
+                           "<tr>"+
+                               "<th>titleId</th>" +
+                               "<th>loaded </th>" +
+                               "<th>updated</th>" +
+                               "<th>limits</th>" +
+                           "</tr>" +
+                           "<tr>" +
+                               "<td  class='td1'>" + t.titleId + "</td>" +
+                               "<td  class='td1'>" + t.isOnDevice            + "</td>" +
+                               "<td  class='td1'>" + t.isUpdateAvailable   + "</td>";
+
+                    if (t.limits.length == 0) {
+                        info += "<td  class='td1'>none</td>";
+                    }
+                    else {
+                        info += "<th><table>" +
+                                "<tr>"+
+                                    "<th>limit code</th>" +
+                                    "<th>limit</th>" +
+                                    "<th>consumed</th>" +
+                                "</tr>"
+                        var i;
+                        for (i = 0;  i < t.limits.length;  ++i) {
+                            // var consumed = t.limits.get(i).hasConsumption ? t.limits.get(i).consumed : "unknown";
+                            // var consumed = t.limits.get(i).consumed; if (consumed == null) consumed = "unknown";
+                            info += "<tr>" +
+                                        "<td  class='td1'>" + t.limits.get(i).code      + "</td>" +
+                                        "<td  class='td1'>" + t.limits.get(i).limit     + "</td>" +
+                                        "<td  class='td1'>" + t.limits.get(i).consumed  + "</td>" +
+                                    "</tr>";
+                        }
+                        info += "</table></th>";
+                    }
+
+                    info += "</tr></table>";
+                }
+                setText1 (info);
+                setText2 ("Select another Operation");
+                setErr ("");
+            }
+        }
+        
+        
+
+
+        function listOwnedTitles()
+        {
+            var t;
+            var i, k;
+            var err = null;
+            
+            var t1 = "<table border=1>" +
+                        "<tr>"+
+                           "<th>titleId</th>" +
+                           "<th>loaded </th>" +
+                           "<th>updated</th>" +
+                           "<th>limits</th>" +
+                        "</tr>"
+                        
+            // ec.listOwnedTitles returns an ECOwnedTitles object or an ECError
+            // If there are no owned titles, a list with 0 elements is returned
+            
+            setText1("");
+            setText2("");
+            setErr("");
+                        
+            var titles = ec.listOwnedTitles ();
+            
+            if (typeof(titles) != "object") {
+                err = "listOwnedTitles returned ";
+                if (typeof(titles) != "number") {
+                    err += typeof(titles);
+                } else  {
+                    err += titles;
+                }
+                titles = new ECOwnedTitles();  // so it is valid 0 length list
+            }
+            else for (i = 0;  i < titles.length;  ++i) {
+                t = titles.get(i);
+                t1 +=
+                   "<tr><td  class='td1'>" + t.titleId + "</td>" +
+                       "<td  class='td1'>" + t.isOnDevice            + "</td>" +
+                       "<td  class='td1'>" + t.isUpdateAvailable   + "</td>";
+
+                if (t.limits.length == 0) {
+                    t1 += "<td  class='td1'>none</td>";
+                }
+                else {
+                    t1 += "<th><table>" +
+                            "<tr>"+
+                                "<th>limit code</th>" +
+                                "<th>limit</th>" +
+                                "<th>consumed</th>" +
+                            "</tr>";
+                            
+                    for (k = 0;  k < t.limits.length; ++k) {
+                        t1 += "<tr>" +
+                                    "<td  class='td1'>" + t.limits.get(k).code      + "</td>" +
+                                    "<td  class='td1'>" + t.limits.get(k).limit     + "</td>" +
+                                    "<td  class='td1'>" + t.limits.get(k).consumed  + "</td>" +
+                                "</tr>";
+                    }
+                    t1 += "</th></table>";
+                }
+
+                t1 += "</tr>";
+            }
+            t1 += "</table>";
+            if (err != null) {
+                setErr (err);
+            }
+            else {
+                if (titles.length == 0) {
+                    t1 = "<br><br>No owned titles were found."
+                    }
+                setText1 (t1)
+                setText2 ("Select another Operation");
+            }
+        }
+
+
+
+        function togProgressBar()
+        {
+            useProgressBar = !useProgressBar;
+            document.getElementById("useProgressBar").innerHTML = useProgressBar;
+            
+        }
+
+
+
+        function setDeviceInfo()
+        {
+            setCountry("US");
+            ec.setLanguage("en");
+            ec.setRegion("US");
+            ec.setAge("21");
+            ec.setVcid("30002", "30002");
+        }
+        
+
+        function initPage()
+        {
+            trace ();
+            setText1 ("No title selected");
+            //incProgressRate ();
+            var s = navigator.userAgent.toLowerCase();
+            opera = s.indexOf('opera') + 1;
+            msie = false;
+            if (!opera) {
+                var msie = s.indexOf('msie') + 1;
+            }
+            if (msie) {
+                useProgressBar = true; // MS IE
+            } else {
+                useProgressBar = false;
+            }
+            document.getElementById("useProgressBar").innerHTML = useProgressBar;
+
+            selectTitle("0001000000082002");
+            trace ();
+            var ecsURL = "http://ecs.lab3.routefree.com:17105/ecs/services/ECommerceSOAP";
+            var iasURL = "http://ias.lab3.routefree.com:17101/ias/services/IdentityAuthenticationSOAP";
+            var ccsURL = "http://ccs.lab3.routefree.com:16983/ccs/download";
+            var ucsURL = "http://ccs.lab3.routefree.com:16983/ccs/download";
+            ec.setWebSvcURLs (ecsURL, iasURL);
+            ec.setContentURLs (ccsURL, ucsURL);
+        }
+        
+        
+    </script>
+
+
+</head>
+<body onload="initPage();">
+    <H1>JavaScript Object Example</H1>
+    <table border="2" id="table1">
+      <tr>
+        <td  class='td1'><button class="tdButton" onclick="getPointsBalance()" id ="button1">Get Points</button></td>
+        <td  class='td1'><button class="tdButton" onclick="launchTitle()" id ="button2">Launch Title</button></td>
+        <td  class='td1'><button class="tdButton" onclick="deleteTicket()" id ="button3">Delete Ticket</button></td>
+        <td  class='td1'><button class="tdButton" onclick="deleteTitleContent()" id ="button4">Delete Content</button></td>
+      </tr>
+      <tr>
+        <td  class='td1'><p id ="points">unknown</td>
+        <td  class='td1'><p id ="selectedTitle">none</td>
+        <td  class='td1'><p id ="progressRate">Fast Progress</td>
+        <td  class='td1'><p id ="disDurOp">disable during op</td>
+      </tr>
+      <tr>
+        <td  class='td1'><button class="tdButton" onclick="purchasePoints()" id ="button5">Purchase Points</button></td>
+        <td  class='td1'><button class="tdButton" onclick="purchaseTitle()" id ="button6">Purchase Title</button></td>
+        <td  class='td1'><button class="tdButton" onclick="download()" id ="button7">Download</button></td>
+        <td  class='td1'><button class="tdButton" onclick="redeemECard()" id ="button8">redeemECard</button></td>
+      <tr>
+        <td  class='td1'><button class="tdButton" onclick="getTitleInfo()" id ="button9">Get Title Info</button></td>
+        <td  class='td1'><button class="tdButton" onclick="syncTickets()" id ="button10">List titles</button></td>
+        <td  class='td1'><button class="tdButton" onclick="getDeviceInfo()" id ="button11">Get Device Info</button></td>
+        <td  class='td1'><button class="tdButton" onclick="getUpdatedApps()" id ="button12">Get Updated Apps</button></td>
+      </tr>
+      <tr>
+        <td  class='td1'><button class="tdButton" onclick="registerVirtualConsole()" id ="button13">Register</button></td>
+        <td  class='td1'><button class="tdButton" onclick="setDeviceInfo()" id ="button14">Set Country</button></td>
+        <td  class='td1'><button class="tdButton" onclick="checkParentalControlPassword()" id ="button15">Let me play</button></td>
+        <td  class='td1'><button class="tdButton" onclick="togProgressBar()" id="button16">Toggle Progress bar</button></td>
+      </tr>
+      <tr>
+        <td  class='td1'><p id ="vcid">not registered</p></td>
+        <td  class='td1'><p id ="country">none</p></td>
+        <td  class='td1'><p id ="password">thePasswd</td>
+        <td  class='td1'><p id ="useProgressBar">false</td>
+      </tr>
+    </table>
+    <br>
+        <div id="dynDiv1" class="style1"></div>
+    <br>
+        <div id="dynDiv2" class="style2"></div>
+    <br>
+        <div id="errDiv" class="style2"></div>
+
+</body>
+</html>

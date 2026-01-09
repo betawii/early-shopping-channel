@@ -1,0 +1,15 @@
+#!/bin/sh
+
+PACKAGE=oss
+
+#
+#  Insert the package name in front.
+#
+show()
+{
+    package=$1
+    sed -e "s/^/${package}\./" release.dsc
+}
+
+cd /opt/broadon/mgmt/${PACKAGE}/control
+show ${PACKAGE}

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+# /opt/broadon/pkgs/svcdrv/bin/probe 16901 /oss/monitor

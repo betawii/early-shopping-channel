@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# post-installation script
+#
+
+#
+# Define config variables
+#
+/sbin/setconf -r "oss.cmd.getVersion:mode=r-x:=1"
+
+

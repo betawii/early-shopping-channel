@@ -1,0 +1,164 @@
+#!/bin/sh
+
+PKG=/opt/broadon/pkgs/oss
+DATA=/opt/broadon/data/svcdrv
+PROP=BBserver.properties
+NOARPCTL=/opt/broadon/pkgs/netutil/bin/noarpctl
+SSL=/opt/broadon/data/oss/ssl
+
+sys_net_dev=`/sbin/printconf sys.net.dev`
+act_oss=`/sbin/printconf sys.act.oss`
+act_oss=${act_oss// /@@}
+act_lb=`/sbin/printconf sys.act.lb`
+act_lb=${act_lb// /@@}
+
+#
+# The activation variable is of the form:
+# act_value;key1=value1;key2=value2 ...
+#
+parse_attributes() {
+    # remove the leading part up to the first ';'
+    config=${act_oss#*;}
+    if [ "$act_oss" != "$config" ]; then
+	# we do have attribute to handle
+	oldIFS=$IFS
+	IFS=';'
+	# for each token of the form x=y, replace the '=' by a space and then
+	# set the config variable to it.
+	for i in $config; do
+	    IFS=$oldIFS
+	    kv=(`echo ${i/=/' '}`)
+	    /sbin/setconf ${kv[0]} "${kv[1]//@@/' '}"
+	    IFS=';'
+	done
+	IFS=$oldIFS
+    fi
+}
+
+
+configure() {
+    cp $PKG/conf/oss.conf $DATA/conf/httpd
+    cp $PKG/conf/oss.xml $DATA/webapps
+    mkdir -p $DATA/webapps/oss
+    cp -a $PKG/webapps/oss.war $DATA/webapps
+    cp -a $PKG/htdocs $DATA/htdocs/oss
+    mkdir -p $DATA/htdocs/oss/logs
+    cat $PKG/conf/log4j.properties >> $DATA/conf/log4j.properties
+    
+    db_url=`/sbin/printconf oss.db.url`
+    db_user=`/sbin/printconf oss.db.user`
+    db_password=`/sbin/printconf oss.db.password`
+    ext_content_prefix_url=`/sbin/printconf oss.ext.content_prefix_url`
+    ext_uncached_content_prefix_url=`/sbin/printconf oss.ext.uncached_content_prefix_url`
+    ecs_url=`/sbin/printconf oss.ecs.url`
+    ias_url=`/sbin/printconf oss.ias.url`
+    cc_payment_url=`/sbin/printconf oss.cc.payment.url`
+    ext_ecs_url=`/sbin/printconf oss.ext.ecs.url`
+    ext_ias_url=`/sbin/printconf oss.ext.ias.url`
+
+    if [ -z "$db_url" ] ||	\
+       [ -z "$db_user" ] ||	\
+       [ -z "$db_password" ] || \
+       [ -z "$ext_content_prefix_url" ] || \
+       [ -z "$ecs_url" ] || \
+       [ -z "$ext_ecs_url" ] || \
+       [ -z "$ext_ias_url" ] ; then
+       echo "Missing oss config. variables"
+       exit 1
+    fi
+
+    sed -e "s/@@DB_URL@@/$db_url/"		\
+        -e "s/@@DB_USER@@/$db_user/"		\
+        -e "s/@@DB_PASSWORD@@/$db_password/"	\
+        -e "s|@@EXT_CONTENT_PREFIX_URL@@|$ext_content_prefix_url|" 	        \
+        -e "s|@@EXT_UNCACHED_CONTENT_PREFIX_URL@@|$ext_uncached_content_prefix_url|" 	        \
+        -e "s|@@ECS_URL@@|$ecs_url|" 	        \
+        -e "s|@@IAS_URL@@|$ias_url|" 	        \
+        -e "s|@@CC_PAYMENT_URL@@|$cc_payment_url|" 	        \
+        -e "s|@@EXT_ECS_URL@@|$ext_ecs_url|" 	        \
+        -e "s|@@EXT_IAS_URL@@|$ext_ias_url|" 	        \
+	    $PKG/conf/$PROP.tmpl > $DATA/webapps/oss/$PROP
+    if [ $? != 0 ]; then
+	exit 1
+    fi
+}
+
+
+# if the OSS cert is not installed, use the system default
+check_cert() {
+    if [ ! -e ${SSL}/identity.pem ]; then
+	mkdir -p $SSL
+	chown root.root $SSL
+	chmod 0711 $SSL
+	ln -sf /flash/identity.pem ${SSL}/identity.pem
+	ln -sf /flash/private_key.pem ${SSL}/private_key.pem
+	ln -sf /flash/ca_chain.pem ${SSL}/ca_chain.pem
+	ln -sf /flash/root_cert.pem ${SSL}/root_cert.pem
+    fi
+}
+
+
+#
+# Set the IP address used by this package.
+#
+set_ip() {
+    IP=`host oss | sed -e 's/^.* //'`
+    IPd=`echo ${IP} | sed -e 's/^.*\.//'`
+    addrinfo=(`ifconfig $sys_net_dev | grep inet | sed -e 's/inet //'`)
+    myaddr=${addrinfo[0]/*:/}
+    bcast=${addrinfo[1]/*:/}
+    netmask=${addrinfo[2]/*:/}
+
+    # turn on "noarp" if I'm served by load-balancer
+    if [ "$lb" = "p" ] || [ "$lb" = "s" ]; then
+        ${NOARPCTL} add ${IP} ${myaddr}
+    fi
+    ifconfig $sys_net_dev:${IPd} ${IP} netmask ${netmask} broadcast ${bcast}
+}
+
+#
+# Clear the IP address used by this package.
+#
+unset_ip() {
+    IP=`host oss | sed -e 's/^.* //'`
+    IPd=`echo ${IP} | sed -e 's/^.*\.//'`
+    ifconfig $sys_net_dev:${IPd} down
+
+    if [ "$lb" = "p" ] || [ "$lb" = "s" ]; then
+        ${NOARPCTL} del ${IP}
+    fi
+}
+
+start() {
+    if [ "${act_oss%%;*}" != "1" ]; then
+	exit 0
+    fi
+
+    # set up IP alias only if load balancer is not running
+    if [ "${act_lb%%;*}" != "1" ] || ( [ "$lb" != "p" ] && [ "$lb" != "s" ] ); then
+        set_ip
+    fi
+    configure
+    check_cert
+}
+
+stop() {
+    if [ "${act_lb%%;*}" != "1" ] || ( [ "$lb" != "p" ] && [ "$lb" != "s" ] ); then
+        unset_ip
+    fi
+}
+
+
+parse_attributes
+lb=`/sbin/printconf oss.lb`
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    *)
+	echo $"Usage: $0 {start|stop}"
+esac
